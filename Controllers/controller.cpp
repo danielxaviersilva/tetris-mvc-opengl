@@ -1,6 +1,11 @@
 #include "controller.h"
 
-Controller::Controller()
+void Controller::setRenderer(Renderer *renderer)
+{
+    m_renderer = renderer;
+}
+
+Controller::Controller(Renderer* renderer): m_logic(nullptr), m_renderer(renderer)
 {
 
 }
@@ -23,5 +28,13 @@ void Controller::pullRotate()
 
 void Controller::pullSpeedUp()
 {
-     m_movementQueue.push_back(SPEED_UP);
+    m_movementQueue.push_back(SPEED_UP);
+}
+
+void Controller::start()
+{
+    m_logic = new Tetris;
+    m_renderer->initialize(m_logic);
+//    while(1)
+        m_renderer->render();
 }

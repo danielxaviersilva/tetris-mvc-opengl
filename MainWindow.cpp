@@ -30,7 +30,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     switch(event->key())
     {
-    case Qt::Key_Left://  std::cout << "Tecla esquerda" << std::endl;
+    case Qt::Key_Left:  std::cout << "Tecla esquerda" << std::endl;
             m_controller.pullMoveLeft();
     break;
 
@@ -50,5 +50,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::on_pushButton_clicked()
 {
-
+    m_controller.setRenderer(ui->openGLWidget);
+    m_controller.start();
 }

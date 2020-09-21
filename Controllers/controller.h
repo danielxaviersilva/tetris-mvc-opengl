@@ -18,15 +18,19 @@ public:
 private:
     std::vector<MOVEMENT> m_movementQueue;
 
-    Renderer m_renderer;
-    Tetris m_logic;
+    Renderer *m_renderer;
+    Tetris *m_logic;
 
 public:
-    Controller();
+    Controller(Renderer* renderer = nullptr);
     void pullMoveLeft();
     void pullMoveRight();
     void pullRotate();
     void pullSpeedUp();
+
+
+    void start();
+    void setRenderer(Renderer *renderer);
 };
 
 #endif // CONTROLLER_H

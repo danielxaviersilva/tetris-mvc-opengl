@@ -3,11 +3,18 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
+
+#include "opencv2/opencv.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/core/types_c.h>
+
 #include <Utilities/CGUtilities.h>
 #include <Utilities/VertexBuffer.h>
 #include <Utilities/Shader.h>
 #include <Utilities/VertexArray.h>
 #include <Logic/Tetris.h>
+
+
 #include <vector>
 
 
@@ -20,12 +27,18 @@ public:
     void initialize(Tetris* tetris);
     void resizeGL(int width, int height) override;
     void paintGL() override;
+    void render();
 private:
 
     Tetris* m_tetris;
 
+    std::vector<uint> m_textureIDs;
+    int m_samplers[TETROMINO_AMOUNT +1];
+
 
     void printContextInformation();
+
+    inline GLuint LoadTexture(const std::string& path);
 
     VertexArray m_VAO;
 

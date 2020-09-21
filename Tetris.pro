@@ -62,4 +62,12 @@ PKGCONFIG += opencv4
 
 DISTFILES += \
     Shaders/renderInstances.frag \
-    Shaders/renderInstances.vert
+    Shaders/renderInstances.vert \
+    Textures/TEX0.png \
+    Textures/TEX1.png \
+    Textures/TEX2.png \
+    Textures/TEX3.png \
+    Textures/TEX4.png \
+    Textures/TEX5.png \
+    Textures/TEX6.png \
+    Textures/TEX7.png
