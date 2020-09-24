@@ -28,7 +28,8 @@ SOURCES += \
     Utilities/camera.cpp \
     Utilities/shader.cpp \
     main.cpp \
-    MainWindow.cpp
+    MainWindow.cpp \
+    ui/WidgetOpenGL.cpp
 
 HEADERS += \
     Controllers/controller.h \
@@ -43,7 +44,8 @@ HEADERS += \
     Utilities/Timer.h \
     Utilities/VertexArray.h \
     Utilities/VertexBuffer.h \
-    Utilities/renderCrossLine.h
+    Utilities/renderCrossLine.h \
+    ui/WidgetOpenGL.h
 
 INCLUDEPATH += "/usr/local/Cellar/glm/0.9.9.5/include" \
                 "/usr/local/Cellar/glew/2.1.0_1/include/"

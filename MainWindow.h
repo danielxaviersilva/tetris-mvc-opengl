@@ -23,8 +23,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    Controller * m_controller;
 
-    Controller m_controller;
+
 protected:
     void keyPressEvent(QKeyEvent* event) override;
 };

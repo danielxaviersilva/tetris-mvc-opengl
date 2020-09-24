@@ -18,19 +18,16 @@
 #include <vector>
 
 
-class Renderer: public QOpenGLWidget, protected QOpenGLFunctions, public CGUtilities
+class Renderer: public CGUtilities
 {
-    Q_OBJECT
 public:
-    Renderer(QWidget *parent = nullptr);
-    void initializeGL() override;
-    void initialize(Tetris* tetris);
-    void resizeGL(int width, int height) override;
-    void paintGL() override;
-    void render();
+    Renderer();
+    void initialize();
+    void render(const std::vector<glm::vec2>& centerSet, std::vector<float>& tetrominoSet);
 private:
 
     Tetris* m_tetris;
+    bool m_initialized;
 
     std::vector<uint> m_textureIDs;
     int m_samplers[TETROMINO_AMOUNT +1];
@@ -41,6 +38,8 @@ private:
     inline GLuint LoadTexture(const std::string& path);
 
     VertexArray m_VAO;
+    VertexArray m_BkgVAO;
+    VertexBuffer m_BkgVBO;
 
     VertexBuffer m_VertexTexCoordsVBO;
     VertexBuffer m_displacementVBO;
@@ -48,16 +47,11 @@ private:
 
 
     Shader m_program;
-    int m_verticesSize;
 
-    glm::vec4 m_materialAmbientColor, m_materialDiffuseColor, m_materialSpecularColor;
-    float     m_shineness;
+    const float m_BGSlot = 8.0f;
+    int m_bkgTextureIndex;
 
-    int m_thetaRes;
-    int m_phiRes;
 
-    bool m_initialized;
-    bool m_attributesFlag;
 
 };
 

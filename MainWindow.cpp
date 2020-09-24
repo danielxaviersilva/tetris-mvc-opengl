@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
     format.setDepthBufferSize(24);
     QSurfaceFormat::setDefaultFormat(format);
     this->ui->openGLWidget->setFormat(format);
+
+    m_controller = new Controller;
+    this->ui->openGLWidget->setController(m_controller);
 }
 
 MainWindow::~MainWindow()
@@ -28,28 +31,30 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
+    std::cout << __FUNCTION__ << std::endl;
     switch(event->key())
     {
     case Qt::Key_Left:  std::cout << "Tecla esquerda" << std::endl;
-            m_controller.pullMoveLeft();
+            m_controller->pullMoveLeft();
     break;
 
-    case Qt::Key_Right:// std::cout << "Tecla Direita" << std::endl;
-            m_controller.pullMoveRight();
+    case Qt::Key_Right: std::cout << "Tecla Direita" << std::endl;
+            m_controller->pullMoveRight();
     break;
 
     case Qt::Key_Up:  //  std::cout << "Tecla Cima" << std::endl;
-            m_controller.pullRotate();
+            m_controller->pullRotate();
     break;
 
     case Qt::Key_Down://  std::cout << "Tecla baixo" << std::endl;
-            m_controller.pullSpeedUp();
+            m_controller->pullSpeedUp();
     break;
     }
+
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-    m_controller.setRenderer(ui->openGLWidget);
-    m_controller.start();
+    m_controller->start();
+    m_controller = ui->openGLWidget->getController();
 }

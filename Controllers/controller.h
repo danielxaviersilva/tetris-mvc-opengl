@@ -20,17 +20,22 @@ private:
 
     Renderer *m_renderer;
     Tetris *m_logic;
+    int m_maxSpeed = 20;
+    int m_speedCounter = 0;
 
 public:
-    Controller(Renderer* renderer = nullptr);
+    Controller();
     void pullMoveLeft();
     void pullMoveRight();
     void pullRotate();
     void pullSpeedUp();
 
+    void draw();
+
 
     void start();
     void setRenderer(Renderer *renderer);
+    Renderer *getRenderer() const;
 };
 
 #endif // CONTROLLER_H
