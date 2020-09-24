@@ -138,6 +138,10 @@ void Tetris::moveDown()
         m_currentTetrominoPosition[1]++;
         updateField();
     }
+    else{
+        lockedPieceHandler();
+    }
+
 }
 
 void Tetris::Rotate(Tetris::rotationAngles rotation)
@@ -230,5 +234,34 @@ void Tetris::updateField()
         for(int j = 0; j<4;j++)
             if(m_currentTetromino[i + j*4] == 1)
                 m_renderField[i + m_currentTetrominoPosition[0] + (j+ m_currentTetrominoPosition[1])*FIELD_WIDTH] = m_currentIndex;
+
+}
+
+void Tetris::lockedPieceHandler()
+{
+//    m_logicField = m_renderField;
+
+    for (int j  = 0; j < FIELD_HEIGHT-1; j++)
+    {
+        int rowCounter = 0;
+        for (int i = 1; i< FIELD_WIDTH -1; i++)
+            if(m_renderField[j*FIELD_WIDTH + i] != EMPTY_SPACE)
+                rowCounter++;
+            else break;
+        if(rowCounter == FIELD_WIDTH - 2){
+            for (int k = j; k>0; k--)
+                for (int i = 1; i< FIELD_WIDTH-1; i++) //In this case, conserving the borders
+                    m_renderField[k*FIELD_WIDTH + i] = m_renderField[(k-1)*FIELD_WIDTH + i];
+        }
+    }
+
+    m_logicField = m_renderField;
+
+    generateTetromino();
+    m_currentTetrominoPosition[0] = rand()%TETROMINO_AMOUNT;
+    m_currentTetrominoPosition[1] = 0;
+    if(!pieceFits(CASE90, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1]))
+        std::cout << "game over" << std::endl;
+
 
 }

@@ -53,6 +53,8 @@ private:
     int rotatePosition(int px, int py, rotationAngles rotationAngle);
     void clearTetromino();
     void updateField();
+
+    void lockedPieceHandler();
 };
 
 #endif // TETRIS_H
