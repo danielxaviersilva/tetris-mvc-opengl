@@ -104,7 +104,7 @@ void Renderer::render(const std::vector<glm::vec2>& centerSet, std::vector<float
        return;
    std::cout <<"paintRender" << std::endl;
 
-   glClearColor(1.0f,1.0f,1.0f,1.0f);
+//   glClearColor(1.0f,1.0f,1.0f,1.0f);
    m_program.useProgram();
    glActiveTexture(GL_TEXTURE8 /*+ int(m_BGSlot)*/);
    _check_gl_error(__FUNCTION__,__LINE__);
@@ -136,7 +136,6 @@ void Renderer::render(const std::vector<glm::vec2>& centerSet, std::vector<float
 
    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, tetrominoSet.size());
    _check_gl_error(__FILE__,__LINE__);
-
 
 }
 

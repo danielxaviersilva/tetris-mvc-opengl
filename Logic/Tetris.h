@@ -32,8 +32,11 @@ private:
     int m_currentTetrominoPosition[2];
     int m_currentIndex;
 
+    int m_fieldWidth;
+    int m_fieldHeight;
+
 public:
-    Tetris();
+    Tetris(int fieldWidth = 12, int fieldHeight = 18);
     void generateTetromino();
     int getFieldWidth();
     int getFieldHeight();

@@ -1,7 +1,7 @@
 #include "Tetris.h"
 #include <iostream>
 
-Tetris::Tetris()
+Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fieldHeight(fieldHeight)
 {
     srand(time(NULL));
     m_tetrominoSet[0] = {0,0,1,0,
@@ -180,6 +180,9 @@ void Tetris::forcePieceDown()
         m_currentTetrominoPosition[1]++;
         updateField();
     }
+    else
+        lockedPieceHandler();
+
 
 }
 
