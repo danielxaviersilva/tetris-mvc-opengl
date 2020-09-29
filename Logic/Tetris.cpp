@@ -39,9 +39,9 @@ Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fie
                          0,1,0,0,
                          0,0,0,0};
 
-    for(int j = 0; j < FIELD_HEIGHT; j++)
-        for(int i = 0; i < FIELD_WIDTH; i++)
-            if(i == 0 || i == FIELD_WIDTH -1 || j == FIELD_HEIGHT-1)
+    for(int j = 0; j < m_fieldHeight; j++)
+        for(int i = 0; i < m_fieldWidth; i++)
+            if(i == 0 || i == m_fieldWidth -1 || j == m_fieldHeight-1)
                 m_logicField.push_back(BORDER);
             else{
                 m_logicField.push_back(EMPTY_SPACE);
@@ -53,15 +53,15 @@ Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fie
     std::vector<float> borderMeshX;
     std::vector<float> borderMeshY;
 
-    for(float i = -1; i <= 1.01; i+=(2/float(FIELD_WIDTH)))
+    for(float i = -1; i <= 1.01; i+=(2/float(m_fieldWidth)))
         borderMeshX.push_back(i);
 
-    for(float j = 1; j >= -1.01; j-=2/float(FIELD_HEIGHT))
+    for(float j = 1; j >= -1.01; j-=2/float(m_fieldHeight))
         borderMeshY.push_back(j);
 
 
-    for(int j = 0; j < FIELD_HEIGHT; j++)
-        for(int i = 0; i < FIELD_WIDTH; i++)
+    for(int j = 0; j < m_fieldHeight; j++)
+        for(int i = 0; i < m_fieldWidth; i++)
             m_centerSet.push_back(glm::vec2(0.5f*(borderMeshX[i] + borderMeshX[i+1]), 0.5f*(borderMeshY[j] + borderMeshY[j+1])));
 
 
@@ -82,18 +82,18 @@ void Tetris::generateTetromino()
 
 int Tetris::getFieldWidth()
 {
-    return FIELD_WIDTH;
+    return m_fieldWidth;
 }
 
 int Tetris::getFieldHeight()
 {
-    return FIELD_HEIGHT;
+    return m_fieldHeight;
 }
 
 std::vector<glm::vec2>& Tetris::getCurrentCenters()
 {
     m_currentCenters.clear();
-    for (int i = 0; i < FIELD_WIDTH*FIELD_HEIGHT; i++)
+    for (int i = 0; i < m_fieldWidth*m_fieldHeight; i++)
         if(m_renderField[i] != EMPTY_SPACE)
             m_currentCenters.push_back(m_centerSet[i]);
 
@@ -104,7 +104,7 @@ std::vector<glm::vec2>& Tetris::getCurrentCenters()
 std::vector<float>& Tetris::getTetrominoIndex()
 {
     m_currentTetrominoIndex.clear();
-    for (int i = 0; i < FIELD_WIDTH*FIELD_HEIGHT; i++)
+    for (int i = 0; i < m_fieldWidth*m_fieldHeight; i++)
         if(m_renderField[i] != EMPTY_SPACE)
             m_currentTetrominoIndex.push_back((float)m_renderField[i]);
 
@@ -193,11 +193,11 @@ bool Tetris::pieceFits(Tetris::rotationAngles rotationAngle, int posX, int posY)
         for (int j =0; j<4; j++)
         {
             int blockPosition = rotatePosition(i, j, rotationAngle);
-            int fieldBlockPosition = (posY + j)*FIELD_WIDTH + (posX + i);
+            int fieldBlockPosition = (posY + j)*m_fieldWidth + (posX + i);
 
-            if(posX + i >= 0 && posX + i <= FIELD_WIDTH)
+            if(posX + i >= 0 && posX + i <= m_fieldWidth)
             {
-                if(posY + j>=0 && posY + j <= FIELD_HEIGHT)
+                if(posY + j>=0 && posY + j <= m_fieldHeight)
                 {
                     if(m_currentTetromino[blockPosition] !=0 && m_logicField[fieldBlockPosition] != EMPTY_SPACE)
                         return false;
@@ -226,7 +226,7 @@ void Tetris::clearTetromino()
     for (int i = 0; i<4;i++){
         for(int j = 0; j<4;j++){
             if(m_currentTetromino[i+ 4*j] != 0)
-                m_renderField[i + m_currentTetrominoPosition[0] + (j+ m_currentTetrominoPosition[1])*FIELD_WIDTH] = EMPTY_SPACE;
+                m_renderField[i + m_currentTetrominoPosition[0] + (j+ m_currentTetrominoPosition[1])*m_fieldWidth] = EMPTY_SPACE;
         }
     }
 }
@@ -236,7 +236,7 @@ void Tetris::updateField()
     for (int i = 0; i<4;i++)
         for(int j = 0; j<4;j++)
             if(m_currentTetromino[i + j*4] == 1)
-                m_renderField[i + m_currentTetrominoPosition[0] + (j+ m_currentTetrominoPosition[1])*FIELD_WIDTH] = m_currentIndex;
+                m_renderField[i + m_currentTetrominoPosition[0] + (j+ m_currentTetrominoPosition[1])*m_fieldWidth] = m_currentIndex;
 
 }
 
@@ -244,17 +244,17 @@ void Tetris::lockedPieceHandler()
 {
 //    m_logicField = m_renderField;
 
-    for (int j  = 0; j < FIELD_HEIGHT-1; j++)
+    for (int j  = 0; j < m_fieldHeight-1; j++)
     {
         int rowCounter = 0;
-        for (int i = 1; i< FIELD_WIDTH -1; i++)
-            if(m_renderField[j*FIELD_WIDTH + i] != EMPTY_SPACE)
+        for (int i = 1; i< m_fieldWidth -1; i++)
+            if(m_renderField[j*m_fieldWidth + i] != EMPTY_SPACE)
                 rowCounter++;
             else break;
-        if(rowCounter == FIELD_WIDTH - 2){
+        if(rowCounter == m_fieldWidth - 2){
             for (int k = j; k>0; k--)
-                for (int i = 1; i< FIELD_WIDTH-1; i++) //In this case, conserving the borders
-                    m_renderField[k*FIELD_WIDTH + i] = m_renderField[(k-1)*FIELD_WIDTH + i];
+                for (int i = 1; i< m_fieldWidth-1; i++) //In this case, conserving the borders
+                    m_renderField[k*m_fieldWidth + i] = m_renderField[(k-1)*m_fieldWidth + i];
         }
     }
 

@@ -6,40 +6,21 @@ Renderer::Renderer(): m_initialized(false)
 {
 }
 
-void Renderer::initialize()
+void Renderer::initialize(int fieldWidth, int fieldHeight)
 {
     if(!m_initialized)
     {
         m_initialized = true;
         m_program.loadProgram("/Users/daniel_mac/Projetos/Tetris/Shaders/renderInstances.vert","/Users/daniel_mac/Projetos/Tetris/Shaders/renderInstances.frag");
-         int locVertex =glGetAttribLocation(m_program.getProgramID(),"a_vertex");
-         int locTexCoords = glGetAttribLocation(m_program.getProgramID(),"a_textureCoords");
-         int locDisplacement = glGetAttribLocation(m_program.getProgramID(),"ia_displacement");
-         int locTetrominoIndex = glGetAttribLocation(m_program.getProgramID(),"ia_tetrominoIndex");
 
-         if(locVertex == -1 ||locTexCoords == -1 || locDisplacement == -1 || locTetrominoIndex == -1)
-             std::cerr << "Renderer::initialize: At least one of the input names couldn't be found" << std::endl;
-
-         m_VertexTexCoordsVBO.genBuffer();
-         m_displacementVBO.genBuffer();
-         m_tetrominoIndexVBO.genBuffer();
+        m_VertexTexCoordsVBO.genBuffer();
+        m_displacementVBO.genBuffer();
+        m_tetrominoIndexVBO.genBuffer();
 
          m_BkgVBO.genBuffer();
 
-         m_VAO.bind();
-         m_VAO.push<float>(locVertex, 2);
-         m_VAO.push<float>(locTexCoords, 2);
-         m_VAO.addBuffer(m_VertexTexCoordsVBO);
-         m_VAO.clearLayout();
-
-         m_VAO.push<float>(locDisplacement, 2,GL_FALSE, VertexArray::INSTANTIATION_MODE::INSTANCED, 1);
-         m_VAO.addBuffer(m_displacementVBO);
-         m_VAO.clearLayout();
-
-         m_VAO.push<float>(locTetrominoIndex,1, GL_FALSE, VertexArray::INSTANTIATION_MODE::INSTANCED, 1);
-         m_VAO.addBuffer(m_tetrominoIndexVBO);
-         m_VAO.clearLayout();
-
+         setBlockVAOLayout();
+         setBackgroundVAOLayout();
 
          //Format: (vertex.x, vertex.y, TexCoord.u, TexCoord.v)
          std::vector<float> squareVertexTexCoords = {-1.0f,-1.0f,  0.0f, 0.0f,
@@ -49,13 +30,8 @@ void Renderer::initialize()
 
          m_VertexTexCoordsVBO.updateBufferData(squareVertexTexCoords.data(), squareVertexTexCoords.size()*sizeof(float));
 
-
-         float width = m_tetris->getFieldWidth();
-         glUniform1f (m_program.getUniformLocation("u_fieldWidth"),width );
-
-         float height = m_tetris->getFieldHeight();
-         glUniform1f (m_program.getUniformLocation("u_fieldHeight"),height);
-
+         glUniform1f (m_program.getUniformLocation("u_fieldWidth"),fieldWidth);
+         glUniform1f (m_program.getUniformLocation("u_fieldHeight"),fieldHeight);
 
          for (int i= 0; i <= TETROMINO_AMOUNT; i++) //7 to pieces + 1 boundary
              m_textureIDs.push_back(LoadTexture(std::string("/Users/daniel_mac/Projetos/Tetris/Textures/TEX" + std::to_string(i) + ".png")));
@@ -69,11 +45,6 @@ void Renderer::initialize()
 
 
          m_BkgVAO.bind();
-         m_BkgVAO.push<float>(locVertex, 2);
-         m_BkgVAO.push<float>(locTexCoords, 2);
-         m_BkgVAO.push<float>(locDisplacement, 2);
-         m_BkgVAO.push<float>(locTetrominoIndex, 1);
-         m_BkgVAO.addBuffer(m_BkgVBO);
 
          std::vector<float> bkgAttributes = {-1.0f,-1.0f,  0.0f, 0.0f,0.0f,0.0f, m_BGSlot,
                                               1.0f,-1.0f,  1.0f, 0.0f,0.0f,0.0f, m_BGSlot,
@@ -167,6 +138,52 @@ inline GLuint Renderer::LoadTexture(const std::string &path)
 
    image.release();
    return textureID;
+
+
+}
+
+void Renderer::setBlockVAOLayout()
+{
+    int locVertex =glGetAttribLocation(m_program.getProgramID(),"a_vertex");
+    int locTexCoords = glGetAttribLocation(m_program.getProgramID(),"a_textureCoords");
+    int locDisplacement = glGetAttribLocation(m_program.getProgramID(),"ia_displacement");
+    int locTetrominoIndex = glGetAttribLocation(m_program.getProgramID(),"ia_tetrominoIndex");
+
+    if(locVertex == -1 ||locTexCoords == -1 || locDisplacement == -1 || locTetrominoIndex == -1)
+        std::cerr << "Renderer::initialize: At least one of the input names couldn't be found" << std::endl;
+
+
+    m_VAO.bind();
+    m_VAO.push<float>(locVertex, 2);
+    m_VAO.push<float>(locTexCoords, 2);
+    m_VAO.addBuffer(m_VertexTexCoordsVBO);
+    m_VAO.clearLayout();
+
+    m_VAO.push<float>(locDisplacement, 2,GL_FALSE, VertexArray::INSTANTIATION_MODE::INSTANCED, 1);
+    m_VAO.addBuffer(m_displacementVBO);
+    m_VAO.clearLayout();
+
+    m_VAO.push<float>(locTetrominoIndex,1, GL_FALSE, VertexArray::INSTANTIATION_MODE::INSTANCED, 1);
+    m_VAO.addBuffer(m_tetrominoIndexVBO);
+    m_VAO.clearLayout();
+
+}
+
+inline void Renderer::setBackgroundVAOLayout()
+{
+    int locVertex = glGetAttribLocation(m_program.getProgramID(),"a_vertex");
+    int locTexCoords = glGetAttribLocation(m_program.getProgramID(),"a_textureCoords");
+    int locDisplacement = glGetAttribLocation(m_program.getProgramID(),"ia_displacement");
+    int locTetrominoIndex = glGetAttribLocation(m_program.getProgramID(),"ia_tetrominoIndex");
+
+    if(locVertex == -1 ||locTexCoords == -1 || locDisplacement == -1 || locTetrominoIndex == -1)
+        std::cerr << "Renderer::initialize: At least one of the input names couldn't be found" << std::endl;
+
+    m_BkgVAO.push<float>(locVertex, 2);
+    m_BkgVAO.push<float>(locTexCoords, 2);
+    m_BkgVAO.push<float>(locDisplacement, 2);
+    m_BkgVAO.push<float>(locTetrominoIndex, 1);
+    m_BkgVAO.addBuffer(m_BkgVBO);
 
 
 }

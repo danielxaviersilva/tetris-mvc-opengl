@@ -40,23 +40,24 @@ void Controller::pullSpeedUp()
 
 void Controller::draw()
 {
+    if(m_renderer == nullptr)
+        return;
 
-    if(m_renderer != nullptr){
-        m_speedCounter++;
-        if(m_speedCounter == m_maxSpeed)
-        {
-            m_speedCounter = 0;
-            m_logic->forcePieceDown();
-        }
-        m_renderer->render(m_logic->getCurrentCenters(), m_logic->getTetrominoIndex());
+    m_speedCounter++;
+    if(m_speedCounter == m_maxSpeed)
+    {
+        m_speedCounter = 0;
+        m_logic->forcePieceDown();
     }
+    m_renderer->render(m_logic->getCurrentCenters(), m_logic->getTetrominoIndex());
+
 }
 
 void Controller::start()
 {
-    m_renderer = new Renderer;
-    m_renderer->initialize();
     m_logic = new Tetris;
+    m_renderer = new Renderer;
+    m_renderer->initialize(m_logic->getFieldWidth(), m_logic->getFieldHeight());
 //    while(1)
 //        m_renderer->render();
 }

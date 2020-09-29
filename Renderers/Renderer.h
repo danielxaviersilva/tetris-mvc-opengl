@@ -22,7 +22,7 @@ class Renderer: public CGUtilities
 {
 public:
     Renderer();
-    void initialize();
+    void initialize(int fieldWidth, int fieldHeight);
     void render(const std::vector<glm::vec2>& centerSet, std::vector<float>& tetrominoSet);
 private:
 
@@ -50,6 +50,9 @@ private:
 
     const float m_BGSlot = 8.0f;
     int m_bkgTextureIndex;
+
+    inline void setBlockVAOLayout();
+    inline void setBackgroundVAOLayout();
 
 
 
