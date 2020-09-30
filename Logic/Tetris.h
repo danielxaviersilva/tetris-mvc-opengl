@@ -5,10 +5,9 @@
 #include <time.h>
 
 #define TETROMINO_AMOUNT 7
-#define FIELD_WIDTH 12
-#define FIELD_HEIGHT 18
-#define BORDER 7
-#define EMPTY_SPACE -1
+#define BORDER 1
+#define EMPTY_SPACE 0
+
 
 
 class Tetris
@@ -19,12 +18,11 @@ public:
     };
 private:
 
-
     std::vector<int> m_tetrominoSet[TETROMINO_AMOUNT];
     std::vector<int> m_currentTetromino;
 
-    std::vector<int> m_logicField;
-    std::vector<int> m_renderField;
+    std::vector<float> m_logicField;
+    std::vector<float> m_renderField;
     std::vector<glm::vec2> m_centerSet;
 
     std::vector<glm::vec2> m_currentCenters;
@@ -35,13 +33,17 @@ private:
     int m_fieldWidth;
     int m_fieldHeight;
 
+
+    int m_maxSpeed;
+    int m_speedCounter;
+    int m_pieceCounter;
+
 public:
     Tetris(int fieldWidth = 12, int fieldHeight = 18);
     void generateTetromino();
     int getFieldWidth();
     int getFieldHeight();
 
-    std::vector<glm::vec2> & getCurrentCenters();
     std::vector<float>& getTetrominoIndex();
 
     void moveLeft();
@@ -58,6 +60,7 @@ private:
     void updateField();
 
     void lockedPieceHandler();
+    inline void resetTetrominoPosition();
 };
 
 #endif // TETRIS_H

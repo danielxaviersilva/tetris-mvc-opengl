@@ -14,8 +14,8 @@
 #include <Utilities/VertexArray.h>
 #include <Logic/Tetris.h>
 
-
 #include <vector>
+#define BACKGROUND_INDEX 9 //If changed, go to shader to apply the same value so it matches
 
 
 class Renderer: public CGUtilities
@@ -23,15 +23,13 @@ class Renderer: public CGUtilities
 public:
     Renderer();
     void initialize(int fieldWidth, int fieldHeight);
-    void render(const std::vector<glm::vec2>& centerSet, std::vector<float>& tetrominoSet);
+    void render(std::vector<float>& tetrominoSet);
 private:
 
-    Tetris* m_tetris;
     bool m_initialized;
 
     std::vector<uint> m_textureIDs;
-    int m_samplers[TETROMINO_AMOUNT +1];
-
+    int m_samplers[TETROMINO_AMOUNT+1];
 
     void printContextInformation();
 
@@ -44,18 +42,14 @@ private:
     VertexBuffer m_VertexTexCoordsVBO;
     VertexBuffer m_displacementVBO;
     VertexBuffer m_tetrominoIndexVBO;
-
-
     Shader m_program;
 
-    const float m_BGSlot = 8.0f;
     int m_bkgTextureIndex;
 
     inline void setBlockVAOLayout();
     inline void setBackgroundVAOLayout();
-
-
-
+    inline void setFixedBlockAttributes(int fieldWidth, int fieldHeight);
+    inline void setBackgroundAttributes();
 };
 
 #endif // RENDERER_H

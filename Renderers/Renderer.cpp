@@ -1,113 +1,63 @@
 #include "Renderer.h"
 #include <iostream>
-#include <chrono>
 
-Renderer::Renderer(): m_initialized(false)
-{
-}
+Renderer::Renderer(): m_initialized(false){}
 
 void Renderer::initialize(int fieldWidth, int fieldHeight)
 {
     if(!m_initialized)
     {
         m_initialized = true;
-        m_program.loadProgram("/Users/daniel_mac/Projetos/Tetris/Shaders/renderInstances.vert","/Users/daniel_mac/Projetos/Tetris/Shaders/renderInstances.frag");
+        m_program.loadProgram("./Shaders/renderInstances.vert","./Shaders/renderInstances.frag");
 
         m_VertexTexCoordsVBO.genBuffer();
         m_displacementVBO.genBuffer();
         m_tetrominoIndexVBO.genBuffer();
-
-         m_BkgVBO.genBuffer();
+        m_BkgVBO.genBuffer();
 
          setBlockVAOLayout();
+         setFixedBlockAttributes(fieldWidth, fieldHeight);
+
          setBackgroundVAOLayout();
+         setBackgroundAttributes();
 
-         //Format: (vertex.x, vertex.y, TexCoord.u, TexCoord.v)
-         std::vector<float> squareVertexTexCoords = {-1.0f,-1.0f,  0.0f, 0.0f,
-                                                      1.0f,-1.0f,  1.0f, 0.0f,
-                                                      1.0f, 1.0f,  1.0f, 1.0f,
-                                                     -1.0f, 1.0f,  0.0f, 1.0f};
-
-         m_VertexTexCoordsVBO.updateBufferData(squareVertexTexCoords.data(), squareVertexTexCoords.size()*sizeof(float));
-
+         //Setting up Uniforms
          glUniform1f (m_program.getUniformLocation("u_fieldWidth"),fieldWidth);
          glUniform1f (m_program.getUniformLocation("u_fieldHeight"),fieldHeight);
 
-         for (int i= 0; i <= TETROMINO_AMOUNT; i++) //7 to pieces + 1 boundary
-             m_textureIDs.push_back(LoadTexture(std::string("/Users/daniel_mac/Projetos/Tetris/Textures/TEX" + std::to_string(i) + ".png")));
-
-         for (int i = 0; i <= TETROMINO_AMOUNT; i++)
-             m_samplers[i] = i;
+         //Setting up Textures
+         for (int i= 0; i <= TETROMINO_AMOUNT; i++) //1 boundary[0] + 7 pieces [1:7]
+             m_textureIDs.push_back(LoadTexture(std::string("./Textures/TEX" + std::to_string(i) + ".png")));
 
          for (int i = 0; i <= TETROMINO_AMOUNT; i++)
              glUniform1i(glGetUniformLocation( m_program.getProgramID(), std::string("u_textureSet[" + std::to_string(i) + "]").c_str()), i);
 
 
-
-         m_BkgVAO.bind();
-
-         std::vector<float> bkgAttributes = {-1.0f,-1.0f,  0.0f, 0.0f,0.0f,0.0f, m_BGSlot,
-                                              1.0f,-1.0f,  1.0f, 0.0f,0.0f,0.0f, m_BGSlot,
-                                              1.0f, 1.0f,  1.0f, 1.0f,0.0f,0.0f, m_BGSlot,
-                                             -1.0f, 1.0f,  0.0f, 1.0f,0.0f,0.0f, m_BGSlot
-                                            };
-          m_BkgVBO.updateBufferData(bkgAttributes.data(), bkgAttributes.size()*sizeof(float));
-          _check_gl_error(__FUNCTION__,__LINE__);
-
-          m_bkgTextureIndex = LoadTexture(std::string("/Users/daniel_mac/Projetos/Tetris/Textures/background.jpg"));
-          _check_gl_error(__FUNCTION__,__LINE__);
-          glUniform1i(glGetUniformLocation( m_program.getProgramID(), std::string("u_textureSet[8]").c_str()), 8);
-          _check_gl_error(__FUNCTION__,__LINE__);
-
-
+         m_bkgTextureIndex = LoadTexture(std::string("./Textures/background.jpg"));
+         glUniform1i(glGetUniformLocation( m_program.getProgramID(), std::string("u_background").c_str()), BACKGROUND_INDEX);
     }
-     _check_gl_error(__FILE__,__LINE__);
-
-
 }
 
 
-void Renderer::render(const std::vector<glm::vec2>& centerSet, std::vector<float>& tetrominoSet)
+void Renderer::render(std::vector<float>& tetrominoSet)
 {
-
-    std::cout <<"paint" << std::endl;
    if(!m_initialized)
        return;
-   std::cout <<"paintRender" << std::endl;
 
-//   glClearColor(1.0f,1.0f,1.0f,1.0f);
    m_program.useProgram();
-   glActiveTexture(GL_TEXTURE8 /*+ int(m_BGSlot)*/);
-   _check_gl_error(__FUNCTION__,__LINE__);
-   glBindTexture(GL_TEXTURE_2D,m_bkgTextureIndex);
-   _check_gl_error(__FUNCTION__,__LINE__);
-
+   glActiveTexture(GL_TEXTURE0 + BACKGROUND_INDEX);
+   glBindTexture(GL_TEXTURE_2D, m_bkgTextureIndex);
    m_BkgVAO.bind();
-
    glDrawArrays(GL_TRIANGLE_FAN, 0,4);
 
 
-
    m_VAO.bind();
-
-
+   m_tetrominoIndexVBO.updateBufferData(tetrominoSet.data(), tetrominoSet.size()*sizeof(float));
    for (int i = 0; i <=  TETROMINO_AMOUNT; i++){
-//    int i = 0;
            glActiveTexture(GL_TEXTURE0 + i);
            glBindTexture(GL_TEXTURE_2D, m_textureIDs[i]);
-
    }
-
-   m_displacementVBO.updateBufferData(centerSet.data(), centerSet.size()*sizeof(glm::vec2));
-   _check_gl_error(__FILE__,__LINE__);
-   m_tetrominoIndexVBO.updateBufferData(tetrominoSet.data(), tetrominoSet.size()*sizeof(float));
-   _check_gl_error(__FILE__,__LINE__);
-
-   glDisable(GL_CULL_FACE);
-
    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, tetrominoSet.size());
-   _check_gl_error(__FILE__,__LINE__);
-
 }
 
 inline GLuint Renderer::LoadTexture(const std::string &path)
@@ -117,6 +67,7 @@ inline GLuint Renderer::LoadTexture(const std::string &path)
               std::cerr << "Texture::Texture(): Texture not load. Path is invalid." << std::endl;
               return 0;
         }
+
         cv::cvtColor(image, image, cv::COLOR_RGB2RGBA);
 //    cv::flip(image, image, 0);
 //        cv::imshow(path, image);
@@ -130,7 +81,7 @@ inline GLuint Renderer::LoadTexture(const std::string &path)
    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
-   std::cout << image.type() << std::endl;
+//   std::cout << image.type() << std::endl;
 
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,image.cols, image.rows,0, GL_BGRA,GL_UNSIGNED_BYTE, image.ptr());
    _check_gl_error(__FILE__,__LINE__);
@@ -138,8 +89,6 @@ inline GLuint Renderer::LoadTexture(const std::string &path)
 
    image.release();
    return textureID;
-
-
 }
 
 void Renderer::setBlockVAOLayout()
@@ -151,7 +100,6 @@ void Renderer::setBlockVAOLayout()
 
     if(locVertex == -1 ||locTexCoords == -1 || locDisplacement == -1 || locTetrominoIndex == -1)
         std::cerr << "Renderer::initialize: At least one of the input names couldn't be found" << std::endl;
-
 
     m_VAO.bind();
     m_VAO.push<float>(locVertex, 2);
@@ -166,7 +114,6 @@ void Renderer::setBlockVAOLayout()
     m_VAO.push<float>(locTetrominoIndex,1, GL_FALSE, VertexArray::INSTANTIATION_MODE::INSTANCED, 1);
     m_VAO.addBuffer(m_tetrominoIndexVBO);
     m_VAO.clearLayout();
-
 }
 
 inline void Renderer::setBackgroundVAOLayout()
@@ -179,11 +126,49 @@ inline void Renderer::setBackgroundVAOLayout()
     if(locVertex == -1 ||locTexCoords == -1 || locDisplacement == -1 || locTetrominoIndex == -1)
         std::cerr << "Renderer::initialize: At least one of the input names couldn't be found" << std::endl;
 
+    m_BkgVAO.bind();
     m_BkgVAO.push<float>(locVertex, 2);
     m_BkgVAO.push<float>(locTexCoords, 2);
     m_BkgVAO.push<float>(locDisplacement, 2);
     m_BkgVAO.push<float>(locTetrominoIndex, 1);
     m_BkgVAO.addBuffer(m_BkgVBO);
+}
+
+void Renderer::setFixedBlockAttributes(int fieldWidth, int fieldHeight)
+{
+    //Format: (vertex.x, vertex.y, TexCoord.u, TexCoord.v)
+    std::vector<float> squareVertexTexCoords = {-1.0f,-1.0f,  0.0f, 0.0f,
+                                                 1.0f,-1.0f,  1.0f, 0.0f,
+                                                 1.0f, 1.0f,  1.0f, 1.0f,
+                                                -1.0f, 1.0f,  0.0f, 1.0f};
+
+    m_VertexTexCoordsVBO.updateBufferData(squareVertexTexCoords.data(), squareVertexTexCoords.size()*sizeof(float));
+
+    std::vector<float> borderMeshX;
+    std::vector<float> borderMeshY;
+    std::vector<glm::vec2> centerSet;
+
+    for(float i = -1; i <= 1.01; i+=(2/float(fieldWidth)))
+        borderMeshX.push_back(i);
+
+    for(float j = 1; j >= -1.01; j-=2/float(fieldHeight))
+        borderMeshY.push_back(j);
 
 
+    for(int j = 0; j < fieldHeight; j++)
+        for(int i = 0; i < fieldWidth; i++)
+            centerSet.push_back(glm::vec2(0.5f*(borderMeshX[i] + borderMeshX[i+1]), 0.5f*(borderMeshY[j] + borderMeshY[j+1])));
+     m_displacementVBO.updateBufferData(centerSet.data(), centerSet.size()*sizeof(glm::vec2));
+
+
+}
+
+inline void Renderer::setBackgroundAttributes()
+{
+    std::vector<float> bkgAttributes = {-1.0f,-1.0f,  0.0f, 0.0f,0.0f,0.0f, BACKGROUND_INDEX,
+                                         1.0f,-1.0f,  1.0f, 0.0f,0.0f,0.0f, BACKGROUND_INDEX,
+                                         1.0f, 1.0f,  1.0f, 1.0f,0.0f,0.0f, BACKGROUND_INDEX,
+                                        -1.0f, 1.0f,  0.0f, 1.0f,0.0f,0.0f, BACKGROUND_INDEX
+                                       };
+     m_BkgVBO.updateBufferData(bkgAttributes.data(), bkgAttributes.size()*sizeof(float));
 }

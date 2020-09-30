@@ -1,7 +1,8 @@
 #include "Tetris.h"
 #include <iostream>
 
-Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fieldHeight(fieldHeight)
+Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fieldHeight(fieldHeight),
+    m_maxSpeed(20), m_speedCounter(0), m_pieceCounter(0)
 {
     srand(time(NULL));
     m_tetrominoSet[0] = {0,0,1,0,
@@ -43,74 +44,22 @@ Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fie
         for(int i = 0; i < m_fieldWidth; i++)
             if(i == 0 || i == m_fieldWidth -1 || j == m_fieldHeight-1)
                 m_logicField.push_back(BORDER);
-            else{
+            else
                 m_logicField.push_back(EMPTY_SPACE);
-            }
 
     m_renderField = m_logicField;
 
-
-    std::vector<float> borderMeshX;
-    std::vector<float> borderMeshY;
-
-    for(float i = -1; i <= 1.01; i+=(2/float(m_fieldWidth)))
-        borderMeshX.push_back(i);
-
-    for(float j = 1; j >= -1.01; j-=2/float(m_fieldHeight))
-        borderMeshY.push_back(j);
-
-
-    for(int j = 0; j < m_fieldHeight; j++)
-        for(int i = 0; i < m_fieldWidth; i++)
-            m_centerSet.push_back(glm::vec2(0.5f*(borderMeshX[i] + borderMeshX[i+1]), 0.5f*(borderMeshY[j] + borderMeshY[j+1])));
-
-
     generateTetromino();
-    m_currentTetrominoPosition[0] = 0;
-    m_currentTetrominoPosition[1] = 0;
-
+    resetTetrominoPosition();
     updateField();
 }
 
 void Tetris::generateTetromino()
 {
-//    srand(time(NULL));
-    int genIndex = rand()%TETROMINO_AMOUNT;
-    m_currentTetromino = m_tetrominoSet[genIndex];
-    m_currentIndex = genIndex;
+    m_currentIndex = rand()%TETROMINO_AMOUNT;
+    m_currentTetromino = m_tetrominoSet[m_currentIndex];
 }
 
-int Tetris::getFieldWidth()
-{
-    return m_fieldWidth;
-}
-
-int Tetris::getFieldHeight()
-{
-    return m_fieldHeight;
-}
-
-std::vector<glm::vec2>& Tetris::getCurrentCenters()
-{
-    m_currentCenters.clear();
-    for (int i = 0; i < m_fieldWidth*m_fieldHeight; i++)
-        if(m_renderField[i] != EMPTY_SPACE)
-            m_currentCenters.push_back(m_centerSet[i]);
-
-    return  m_currentCenters;
-
-}
-
-std::vector<float>& Tetris::getTetrominoIndex()
-{
-    m_currentTetrominoIndex.clear();
-    for (int i = 0; i < m_fieldWidth*m_fieldHeight; i++)
-        if(m_renderField[i] != EMPTY_SPACE)
-            m_currentTetrominoIndex.push_back((float)m_renderField[i]);
-
-    return m_currentTetrominoIndex;
-
-}
 
 void Tetris::moveLeft()
 {
@@ -119,7 +68,6 @@ void Tetris::moveLeft()
         m_currentTetrominoPosition[0]--;
         updateField();
     }
-
 }
 
 void Tetris::moveRight()
@@ -138,9 +86,8 @@ void Tetris::moveDown()
         m_currentTetrominoPosition[1]++;
         updateField();
     }
-    else{
+    else
         lockedPieceHandler();
-    }
 
 }
 
@@ -152,12 +99,12 @@ void Tetris::Rotate(Tetris::rotationAngles rotation)
     {
         for (int px = 0; px < 4; px++)
         {
-        switch(rotation){
-            case CASE0:   rotatedTetromino[px + 4*py] = m_currentTetromino[py*4 + px     ];break;
-            case CASE90:  rotatedTetromino[px + 4*py] = m_currentTetromino[12 + py - px*4];break;
-            case CASE180: rotatedTetromino[px + 4*py] = m_currentTetromino[15 - py*4 -px ];break;
-            case CASE270: rotatedTetromino[px + 4*py] = m_currentTetromino[3- py + px*4  ];break;
-        }
+            switch(rotation){
+                case CASE0:   rotatedTetromino[px + 4*py] = m_currentTetromino[py*4 + px     ];break;
+                case CASE90:  rotatedTetromino[px + 4*py] = m_currentTetromino[12 + py - px*4];break;
+                case CASE180: rotatedTetromino[px + 4*py] = m_currentTetromino[15 - py*4 -px ];break;
+                case CASE270: rotatedTetromino[px + 4*py] = m_currentTetromino[3- py + px*4  ];break;
+            }
         }
     }
     m_currentTetromino = rotatedTetromino;
@@ -170,7 +117,6 @@ void Tetris::rotate90()
         Rotate(CASE90);
         updateField();
     }
-
 }
 
 void Tetris::forcePieceDown()
@@ -182,8 +128,6 @@ void Tetris::forcePieceDown()
     }
     else
         lockedPieceHandler();
-
-
 }
 
 bool Tetris::pieceFits(Tetris::rotationAngles rotationAngle, int posX, int posY)
@@ -205,7 +149,6 @@ bool Tetris::pieceFits(Tetris::rotationAngles rotationAngle, int posX, int posY)
             }
         }
     }
-
     return true;
 }
 
@@ -230,20 +173,17 @@ void Tetris::clearTetromino()
         }
     }
 }
-
 void Tetris::updateField()
 {
     for (int i = 0; i<4;i++)
         for(int j = 0; j<4;j++)
             if(m_currentTetromino[i + j*4] == 1)
-                m_renderField[i + m_currentTetrominoPosition[0] + (j+ m_currentTetrominoPosition[1])*m_fieldWidth] = m_currentIndex;
+                m_renderField[i + m_currentTetrominoPosition[0] + (j+ m_currentTetrominoPosition[1])*m_fieldWidth] = (m_currentIndex+ 2);
 
 }
 
 void Tetris::lockedPieceHandler()
 {
-//    m_logicField = m_renderField;
-
     for (int j  = 0; j < m_fieldHeight-1; j++)
     {
         int rowCounter = 0;
@@ -257,14 +197,35 @@ void Tetris::lockedPieceHandler()
                     m_renderField[k*m_fieldWidth + i] = m_renderField[(k-1)*m_fieldWidth + i];
         }
     }
-
     m_logicField = m_renderField;
-
     generateTetromino();
-    m_currentTetrominoPosition[0] = rand()%TETROMINO_AMOUNT;
-    m_currentTetrominoPosition[1] = 0;
-    if(!pieceFits(CASE90, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1]))
+    resetTetrominoPosition();
+
+    if(!pieceFits(CASE90, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1])){
         std::cout << "game over" << std::endl;
+        return;
+    }
 
+    m_pieceCounter++;
+    std::cout << "Pieces down:" << m_pieceCounter << std::endl;
+    if(m_pieceCounter%15 == 0)
+        m_maxSpeed--;
+}
 
+inline void Tetris::resetTetrominoPosition()
+{
+    m_currentTetrominoPosition[0] = m_fieldWidth/2 -2;
+    m_currentTetrominoPosition[1] = 0;
+}
+
+int Tetris::getFieldWidth(){
+    return m_fieldWidth;
+}
+
+int Tetris::getFieldHeight(){
+    return m_fieldHeight;
+}
+
+std::vector<float>& Tetris::getTetrominoIndex(){
+    return m_renderField;
 }

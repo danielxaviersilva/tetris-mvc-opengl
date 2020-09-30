@@ -49,7 +49,7 @@ void Controller::draw()
         m_speedCounter = 0;
         m_logic->forcePieceDown();
     }
-    m_renderer->render(m_logic->getCurrentCenters(), m_logic->getTetrominoIndex());
+    m_renderer->render(m_logic->getTetrominoIndex());
 
 }
 
