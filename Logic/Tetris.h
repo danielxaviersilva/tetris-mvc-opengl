@@ -23,9 +23,7 @@ private:
 
     std::vector<float> m_logicField;
     std::vector<float> m_renderField;
-    std::vector<glm::vec2> m_centerSet;
 
-    std::vector<glm::vec2> m_currentCenters;
     std::vector<float> m_currentTetrominoIndex;
     int m_currentTetrominoPosition[2];
     int m_currentIndex;
@@ -33,17 +31,21 @@ private:
     int m_fieldWidth;
     int m_fieldHeight;
 
-
     int m_maxSpeed;
     int m_speedCounter;
     int m_pieceCounter;
+    int m_horizontalLinesCounter;
+
+    bool m_speedIncreaseCheck;
+    bool m_isGameOver;
+
+    int m_score;
 
 public:
     Tetris(int fieldWidth = 12, int fieldHeight = 18);
     void generateTetromino();
     int getFieldWidth();
     int getFieldHeight();
-
     std::vector<float>& getTetrominoIndex();
 
     void moveLeft();
@@ -53,6 +55,16 @@ public:
     void rotate90();
     void forcePieceDown();
 
+    void movementHandler();
+
+    int getScore() const;
+
+    bool isGameOver() const;
+
+    int getPieceCounter() const;
+
+    int getHorizontalLinesCounter() const;
+
 private:
     bool pieceFits(rotationAngles rotationAngle, int posX, int posY);
     int rotatePosition(int px, int py, rotationAngles rotationAngle);
@@ -61,6 +73,9 @@ private:
 
     void lockedPieceHandler();
     inline void resetTetrominoPosition();
+    inline void checkHorizontalLines();
+
+    inline void speedHandler();
 };
 
 #endif // TETRIS_H

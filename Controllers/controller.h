@@ -3,6 +3,9 @@
 
 #include "Renderers/Renderer.h"
 #include "Logic/Tetris.h"
+
+#include <chrono>
+#include <thread>
 #include <vector>
 
 
@@ -20,7 +23,7 @@ private:
 
     Renderer *m_renderer;
     Tetris *m_logic;
-    int m_maxSpeed = 20;
+    int m_maxSpeed = 30;
     int m_speedCounter = 0;
 
 public:
@@ -29,6 +32,9 @@ public:
     void pullMoveRight();
     void pullRotate();
     void pullSpeedUp();
+
+    int getTetrisScore() const;
+    std::string getTetrisHorizontalLines() const;
 
     void draw();
 

@@ -4,9 +4,9 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QKeyEvent>
+#include <QString>
 
-#include <chrono>
-#include <thread>
+
 
 #include "../Renderers/Renderer.h"
 #include "Controllers/controller.h"
@@ -28,6 +28,18 @@ public:
 
 private:
    Controller *m_controller;
+
+   int m_score;
+   std::string m_horizontalLineCount;
+
+signals:
+   void scoreChanged(int score);
+   void horizontalLineChanged(QString horizontalLine);
+
+public slots:
+   void setScore(int score);
+   void setHorizontalLine(std::string horizontalLine);
+
 
 
 };

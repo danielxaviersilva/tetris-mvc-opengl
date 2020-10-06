@@ -3,7 +3,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    , ui(new Ui::MainWindow), m_score(0)
 {
     ui->setupUi(this);
     QSurfaceFormat format;
@@ -16,6 +16,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_controller = new Controller;
     this->ui->openGLWidget->setController(m_controller);
+
+    connect(this->ui->openGLWidget, SIGNAL(scoreChanged(int)),
+            ui->ScoreValue, SLOT(setNum(int)));
+
+    connect(this->ui->openGLWidget, SIGNAL(horizontalLineChanged(QString)),
+            ui->HorizontalLinesValue, SLOT(setText(QString)));
+
+
+
+
 }
 
 MainWindow::~MainWindow()
@@ -31,14 +41,14 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    std::cout << __FUNCTION__ << std::endl;
+//    std::cout << __FUNCTION__ << std::endl;
     switch(event->key())
     {
-    case Qt::Key_Left:  std::cout << "Tecla esquerda" << std::endl;
+    case Qt::Key_Left:  //std::cout << "Tecla esquerda" << std::endl;
             m_controller->pullMoveLeft();
     break;
 
-    case Qt::Key_Right: std::cout << "Tecla Direita" << std::endl;
+    case Qt::Key_Right: //std::cout << "Tecla Direita" << std::endl;
             m_controller->pullMoveRight();
     break;
 
@@ -52,6 +62,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
 
 }
+
 
 void MainWindow::on_pushButton_clicked()
 {

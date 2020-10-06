@@ -1,9 +1,7 @@
 #include "controller.h"
 
 Controller::Controller(): m_renderer(nullptr),  m_logic(nullptr)
-{
-
-}
+{}
 
 
 Renderer *Controller::getRenderer() const
@@ -13,42 +11,45 @@ Renderer *Controller::getRenderer() const
 
 
 
-void Controller::pullMoveLeft()
-{
-//    m_movementQueue.push_back(MOVE_LEFT);
+void Controller::pullMoveLeft(){
     m_logic->moveLeft();
-
 }
 
-void Controller::pullMoveRight()
-{
-//     m_movementQueue.push_back(MOVE_RIGHT);
+void Controller::pullMoveRight(){
      m_logic->moveRight();
 }
 
-void Controller::pullRotate()
-{
+void Controller::pullRotate(){
     m_logic->rotate90();
-//     m_movementQueue.push_back(ROTATE);
 }
 
-void Controller::pullSpeedUp()
-{
-    m_movementQueue.push_back(SPEED_UP);
+void Controller::pullSpeedUp(){
     m_logic->moveDown();
 }
 
-void Controller::draw()
-{
-    if(m_renderer == nullptr)
-        return;
+int Controller::getTetrisScore() const{
+    if(m_logic != nullptr)
+        return m_logic->getScore();
+    else
+        return 0;
+}
 
-    m_speedCounter++;
-    if(m_speedCounter == m_maxSpeed)
-    {
-        m_speedCounter = 0;
-        m_logic->forcePieceDown();
-    }
+std::string Controller::getTetrisHorizontalLines() const
+{
+
+    if(m_logic != nullptr){
+        auto temp = m_logic->getHorizontalLinesCounter();
+        return std::to_string(m_logic->getHorizontalLinesCounter());}
+    else
+        return std::string("");
+
+}
+
+void Controller::draw(){
+    if(m_renderer == nullptr || m_logic == nullptr)
+        return;
+    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+   m_logic->movementHandler();
     m_renderer->render(m_logic->getTetrominoIndex());
 
 }

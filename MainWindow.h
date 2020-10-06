@@ -25,8 +25,12 @@ private:
     Ui::MainWindow *ui;
     Controller * m_controller;
 
+    int m_score;
+
 
 protected:
     void keyPressEvent(QKeyEvent* event) override;
+
+
 };
 #endif // MAINWINDOW_H
