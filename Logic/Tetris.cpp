@@ -80,7 +80,7 @@ void Tetris::generateTetromino()
     m_currentTetromino = m_tetrominoSet[m_currentIndex];
     m_pieceCounter++;
 
-    if(!m_pieceCounter%5)
+    if(!m_pieceCounter%SPEED_INCREASE_RATE)
         m_speedIncreaseCheck = true;
 }
 
@@ -166,7 +166,6 @@ void Tetris::movementHandler()
         m_speedCounter = 0;
         forcePieceDown();
     }
-    speedHandler();
 }
 
 bool Tetris::pieceFits(Tetris::rotationAngles rotationAngle, int posX, int posY)
@@ -227,10 +226,7 @@ void Tetris::lockedPieceHandler()
     m_logicField = m_renderField;
     generateTetromino();
     resetTetrominoPosition();
-
-    if(m_pieceCounter%10 == 0){
-        m_speedIncreaseCheck = true;
-    }
+    speedHandler();
 
     if(!pieceFits(CASE90, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1])){
         std::cout << "game over" << std::endl;
@@ -271,9 +267,10 @@ inline void Tetris::speedHandler()
 {
     if(m_speedIncreaseCheck){
         m_speedIncreaseCheck = false;
-        if(m_pieceCounter%3 == 0)
-                if(m_maxSpeed > 0)
-                    m_maxSpeed--;
+        if(m_maxSpeed > 0){
+            m_maxSpeed--;
+            m_speedCounter = 0;
+        }
     }
 }
 

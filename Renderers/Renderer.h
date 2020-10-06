@@ -22,13 +22,14 @@ class Renderer: public CGUtilities
 {
 public:
     Renderer();
+    ~Renderer();
     void initialize(int fieldWidth, int fieldHeight);
     void render(std::vector<float>& tetrominoSet);
 private:
 
     bool m_initialized;
 
-    std::vector<uint> m_textureIDs;
+    std::vector<GLuint> m_textureIDs;
     int m_samplers[TETROMINO_AMOUNT+1];
 
     void printContextInformation();
@@ -44,7 +45,7 @@ private:
     VertexBuffer m_tetrominoIndexVBO;
     Shader m_program;
 
-    int m_bkgTextureIndex;
+    GLuint m_bkgTextureIndex;
 
     inline void setBlockVAOLayout();
     inline void setBackgroundVAOLayout();

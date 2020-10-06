@@ -3,6 +3,14 @@
 
 Renderer::Renderer(): m_initialized(false){}
 
+Renderer::~Renderer()
+{
+    if (!m_textureIDs.empty())
+        glDeleteTextures(m_textureIDs.size(), &m_textureIDs[0]);
+
+    glDeleteTextures(1, &m_bkgTextureIndex);
+}
+
 void Renderer::initialize(int fieldWidth, int fieldHeight)
 {
     if(!m_initialized)

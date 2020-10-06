@@ -7,6 +7,7 @@
 #define TETROMINO_AMOUNT 7
 #define BORDER 1
 #define EMPTY_SPACE 0
+#define SPEED_INCREASE_RATE 1
 
 
 
