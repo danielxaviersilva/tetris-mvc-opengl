@@ -14,9 +14,6 @@ Shader::Shader(const char *vert_path, const char *frag_path)
 Shader::Shader(std::string vert_path, std::string frag_path):
     m_pathVertShader(vert_path), m_pathFragShader(frag_path)
 {
-    const char *vert_pathSrc = vert_path.c_str();
-    const char *frag_pathSrc = frag_path.c_str();
-
     loadProgram(vert_path.c_str(),frag_path.c_str());
 
 }

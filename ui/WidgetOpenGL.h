@@ -29,21 +29,24 @@ public:
 private:
    Controller *m_controller;
 
-   int m_score;
+   std::string m_score;
    std::string m_horizontalLineCount;
-
-signals:
-   void scoreChanged(int score);
-   void horizontalLineChanged(QString horizontalLine);
+   std::string m_pieceCounter;
 
 public slots:
-   void setScore(int score);
+   void setScore(std::string score);
    void setHorizontalLine(std::string horizontalLine);
+   void setPieceCounter(std::string pieceCounter);
+
+signals:
+   void scoreChanged(QString score);
+   void horizontalLineChanged(QString horizontalLine);
+   void pieceCounterChanged(QString pieceCounter);
+
+
 
 
 
 };
-
-
 
 #endif // QGLWIDGET_H

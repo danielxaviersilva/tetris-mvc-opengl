@@ -1,20 +1,20 @@
 #include "Texture.h"
 
 Texture::Texture():
-m_rendererID(0), m_path(""), m_localBuffer(nullptr), m_width(0), m_height(0), m_BPP(0), m_initialized(false)
+m_rendererID(0), m_path(""),  m_width(0), m_height(0), m_initialized(false)
 {
 
 }
 
 Texture::Texture(const std::string &path):
-m_rendererID(0), m_path(path), m_localBuffer(nullptr), m_width(0), m_height(0), m_BPP(0), m_initialized(false)
+m_rendererID(0), m_path(path), m_width(0), m_height(0), m_initialized(false)
 {
     uploadTexture(path);
 
 }
 
 Texture::Texture(std::vector<float> data, int width, int height):
-m_rendererID(0), m_path(""), m_localBuffer(nullptr), m_width(width), m_height(height), m_BPP(0), m_initialized(false)
+m_rendererID(0), m_path(""), m_width(width), m_height(height), m_initialized(false)
 {
     uploadTexture(data, width, height);
 

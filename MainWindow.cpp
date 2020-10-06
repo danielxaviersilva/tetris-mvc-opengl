@@ -17,14 +17,14 @@ MainWindow::MainWindow(QWidget *parent)
     m_controller = new Controller;
     this->ui->openGLWidget->setController(m_controller);
 
-    connect(this->ui->openGLWidget, SIGNAL(scoreChanged(int)),
-            ui->ScoreValue, SLOT(setNum(int)));
+    connect(this->ui->openGLWidget, SIGNAL(scoreChanged(QString)),
+            ui->ScoreValue, SLOT(setText(QString)));
 
     connect(this->ui->openGLWidget, SIGNAL(horizontalLineChanged(QString)),
             ui->HorizontalLinesValue, SLOT(setText(QString)));
 
-
-
+    connect(this->ui->openGLWidget, SIGNAL(pieceCounterChanged(QString)),
+            ui->TetrominosAmount, SLOT(setText(QString)));
 
 }
 

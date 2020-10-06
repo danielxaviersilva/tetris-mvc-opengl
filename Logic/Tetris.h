@@ -62,7 +62,6 @@ public:
     bool isGameOver() const;
 
     int getPieceCounter() const;
-
     int getHorizontalLinesCounter() const;
 
 private:

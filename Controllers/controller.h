@@ -28,13 +28,15 @@ private:
 
 public:
     Controller();
+    ~Controller();
     void pullMoveLeft();
     void pullMoveRight();
     void pullRotate();
     void pullSpeedUp();
 
-    int getTetrisScore() const;
+    std::string getTetrisScore() const;
     std::string getTetrisHorizontalLines() const;
+    std::string getPieceCounter() const;
 
     void draw();
 

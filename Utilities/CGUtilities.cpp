@@ -64,7 +64,6 @@ void CGUtilities::shrinkVec3(std::vector<glm::vec3> &V, std::vector<unsigned int
     if(verbose)
         std::cout << "Arg Vector Size: "<< V.size() << " -> ";
     int vSize = V.size();
-    int idxFix = 0;
 
     for (int i = 0; i < vSize -1;i++)
         for (int j = i+1; j < vSize; j++)

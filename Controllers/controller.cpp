@@ -3,12 +3,16 @@
 Controller::Controller(): m_renderer(nullptr),  m_logic(nullptr)
 {}
 
-
-Renderer *Controller::getRenderer() const
+Controller::~Controller()
 {
-    return m_renderer;
+    delete m_logic;
+    delete m_renderer;
 }
 
+
+Renderer *Controller::getRenderer() const{
+    return m_renderer;
+}
 
 
 void Controller::pullMoveLeft(){
@@ -27,19 +31,27 @@ void Controller::pullSpeedUp(){
     m_logic->moveDown();
 }
 
-int Controller::getTetrisScore() const{
+std::string Controller::getTetrisScore() const{
     if(m_logic != nullptr)
-        return m_logic->getScore();
+        return std::to_string(m_logic->getScore());
     else
-        return 0;
+        return std::string("");
 }
 
 std::string Controller::getTetrisHorizontalLines() const
 {
 
-    if(m_logic != nullptr){
-        auto temp = m_logic->getHorizontalLinesCounter();
-        return std::to_string(m_logic->getHorizontalLinesCounter());}
+    if(m_logic != nullptr)
+        return std::to_string(m_logic->getHorizontalLinesCounter());
+    else
+        return std::string("");
+
+}
+
+std::string Controller::getPieceCounter() const
+{
+    if(m_logic != nullptr)
+        return std::to_string(m_logic->getPieceCounter());
     else
         return std::string("");
 
@@ -56,9 +68,11 @@ void Controller::draw(){
 
 void Controller::start()
 {
+    if(m_logic != nullptr)
+        delete m_logic;
+
     m_logic = new Tetris;
     m_renderer = new Renderer;
     m_renderer->initialize(m_logic->getFieldWidth(), m_logic->getFieldHeight());
-//    while(1)
-//        m_renderer->render();
+
 }
