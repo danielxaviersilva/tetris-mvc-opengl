@@ -1,6 +1,6 @@
 #include "controller.h"
 
-Controller::Controller(): m_renderer(nullptr),  m_logic(nullptr)
+Controller::Controller(): m_renderer(nullptr),  m_logic(nullptr), m_maxSpeed(30), m_speedCounter(0)
 {}
 
 Controller::~Controller()
@@ -16,18 +16,26 @@ Renderer *Controller::getRenderer() const{
 
 
 void Controller::pullMoveLeft(){
+    if(m_logic == nullptr)
+        return;
     m_logic->moveLeft();
 }
 
 void Controller::pullMoveRight(){
+    if(m_logic == nullptr)
+        return;
      m_logic->moveRight();
 }
 
 void Controller::pullRotate(){
+    if(m_logic == nullptr)
+        return;
     m_logic->rotate90();
 }
 
 void Controller::pullSpeedUp(){
+    if(m_logic == nullptr)
+        return;
     m_logic->moveDown();
 }
 
@@ -60,7 +68,7 @@ std::string Controller::getPieceCounter() const
 void Controller::draw(){
     if(m_renderer == nullptr || m_logic == nullptr)
         return;
-    std::this_thread::sleep_for(std::chrono::milliseconds(25));
+   std::this_thread::sleep_for(std::chrono::milliseconds(25));
    m_logic->movementHandler();
     m_renderer->render(m_logic->getTetrominoIndex());
 

@@ -1,28 +1,10 @@
 #include "Tetris.h"
 #include <iostream>
 
-int Tetris::getScore() const
-{
-    return m_score;
-}
 
-bool Tetris::isGameOver() const
-{
-    return m_isGameOver;
-}
-
-int Tetris::getPieceCounter() const
-{
-    return m_pieceCounter;
-}
-
-int Tetris::getHorizontalLinesCounter() const
-{
-    return m_horizontalLinesCounter;
-}
 
 Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fieldHeight(fieldHeight),
-    m_maxSpeed(20), m_speedCounter(0), m_pieceCounter(0), m_horizontalLinesCounter(0), m_speedIncreaseCheck(false), m_isGameOver(false), m_score(0)
+    m_maxSpeed(40), m_speedCounter(0), m_pieceCounter(0), m_horizontalLinesCounter(0), m_speedIncreaseCheck(false), m_isGameOver(false), m_score(0)
 {
     srand(time(NULL));
     m_tetrominoSet[0] = {0,0,1,0,
@@ -30,19 +12,19 @@ Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fie
                          0,0,1,0,
                          0,0,1,0};
 
-    m_tetrominoSet[1] = {0,0,1,0,
-                         0,1,1,0,
-                         0,1,0,0,
-                         0,0,0,0};
-
-    m_tetrominoSet[2] = {0,1,0,0,
-                         0,1,1,0,
-                         0,0,1,0,
-                         0,0,0,0};
-
-    m_tetrominoSet[3] = {0,1,1,0,
+    m_tetrominoSet[1] = {1,1,0,0,
                          0,1,1,0,
                          0,0,0,0,
+                         0,0,0,0};
+
+    m_tetrominoSet[2] = {0,0,1,1,
+                         0,1,1,0,
+                         0,0,0,0,
+                         0,0,0,0};
+
+    m_tetrominoSet[3] = {0,0,0,0,
+                         0,1,1,0,
+                         0,1,1,0,
                          0,0,0,0};
 
     m_tetrominoSet[4] = {0,0,1,0,
@@ -80,7 +62,7 @@ void Tetris::generateTetromino()
     m_currentTetromino = m_tetrominoSet[m_currentIndex];
     m_pieceCounter++;
 
-    if(!m_pieceCounter%SPEED_INCREASE_RATE)
+    if(!(m_pieceCounter%SPEED_INCREASE_RATE))
         m_speedIncreaseCheck = true;
 }
 
@@ -267,7 +249,7 @@ inline void Tetris::speedHandler()
 {
     if(m_speedIncreaseCheck){
         m_speedIncreaseCheck = false;
-        if(m_maxSpeed > 0){
+        if(m_maxSpeed > 15){
             m_maxSpeed--;
             m_speedCounter = 0;
         }
@@ -284,4 +266,20 @@ int Tetris::getFieldHeight(){
 
 std::vector<float>& Tetris::getTetrominoIndex(){
     return m_renderField;
+}
+
+int Tetris::getScore() const{
+    return m_score;
+}
+
+bool Tetris::isGameOver() const{
+    return m_isGameOver;
+}
+
+int Tetris::getPieceCounter() const{
+    return m_pieceCounter;
+}
+
+int Tetris::getHorizontalLinesCounter() const{
+    return m_horizontalLinesCounter;
 }

@@ -23,8 +23,8 @@ private:
 
     Renderer *m_renderer;
     Tetris *m_logic;
-    int m_maxSpeed = 30;
-    int m_speedCounter = 0;
+    int m_maxSpeed;
+    int m_speedCounter;
 
 public:
     Controller();
