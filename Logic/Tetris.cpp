@@ -204,6 +204,8 @@ void Tetris::updateField()
 
 void Tetris::lockedPieceHandler()
 {
+    if(isGameOver())
+        return;
     checkHorizontalLines();
     m_logicField = m_renderField;
     generateTetromino();
