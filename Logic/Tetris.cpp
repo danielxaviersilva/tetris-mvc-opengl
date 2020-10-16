@@ -143,7 +143,7 @@ void Tetris::movementHandler()
     if(isGameOver())
         return;
     m_speedCounter++;
-    if(m_speedCounter == m_maxSpeed)
+    if(m_speedCounter >= m_maxSpeed)
     {
         m_speedCounter = 0;
         forcePieceDown();
@@ -206,9 +206,11 @@ void Tetris::lockedPieceHandler()
 {
     if(isGameOver())
         return;
+    m_speedCounter = m_maxSpeed;
+    generateTetromino();
     checkHorizontalLines();
     m_logicField = m_renderField;
-    generateTetromino();
+
     resetTetrominoPosition();
     speedHandler();
 
@@ -222,7 +224,7 @@ void Tetris::lockedPieceHandler()
 inline void Tetris::resetTetrominoPosition()
 {
     m_currentTetrominoPosition[0] = m_fieldWidth/2 -1;
-    m_currentTetrominoPosition[1] = 0;
+    m_currentTetrominoPosition[1] = -1;
 }
 
 inline void Tetris::checkHorizontalLines()

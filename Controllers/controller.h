@@ -29,6 +29,7 @@ private:
 public:
     Controller();
     ~Controller();
+
     void pullMoveLeft();
     void pullMoveRight();
     void pullRotate();
