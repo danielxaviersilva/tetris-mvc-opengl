@@ -36,6 +36,8 @@ void main (void)
 }	
 
 
+
+
 void setDiffuseLight(in vec3 materialDiffuseColor, in vec3 sourceDiffuseColor,
                                      in vec3 lightLocation, in vec3 normal, in vec3 vertice,
                                      out vec3 resultDiffuseColor)

@@ -29,10 +29,6 @@ void Renderer::initialize(int fieldWidth, int fieldHeight)
          setBackgroundVAOLayout();
          setBackgroundAttributes();
 
-         //Setting up Uniforms
-         glUniform1f (m_program.getUniformLocation("u_fieldWidth"),fieldWidth);
-         glUniform1f (m_program.getUniformLocation("u_fieldHeight"),fieldHeight);
-
          //Setting up Textures
          for (int i= 0; i <= TETROMINO_AMOUNT; i++) //1 boundary[0] + 7 pieces [1:7]
              m_textureIDs.push_back(LoadTexture(std::string("./Textures/TEX" + std::to_string(i) + ".png")));
@@ -47,18 +43,22 @@ void Renderer::initialize(int fieldWidth, int fieldHeight)
 }
 
 
-void Renderer::render(std::vector<float>& tetrominoSet)
+void Renderer::render(const std::vector<float>& tetrominoSet)
 {
-   if(!m_initialized)
+   if(!m_initialized){
+       std::cerr << "Renderer::render: class not initialized" << std::endl;
        return;
+    }
 
    m_program.useProgram();
-   glActiveTexture(GL_TEXTURE0 + BACKGROUND_INDEX);
-   glBindTexture(GL_TEXTURE_2D, m_bkgTextureIndex);
+   //Rendering Background
    m_BkgVAO.bind();
+   glActiveTexture(GL_TEXTURE0 + BACKGROUND_INDEX);
+   glBindTexture(GL_TEXTURE_2D, m_bkgTextureIndex);   
    glDrawArrays(GL_TRIANGLE_FAN, 0,4);
 
 
+   //Rendering Tetrominos
    m_VAO.bind();
    m_tetrominoIndexVBO.updateBufferData(tetrominoSet.data(), tetrominoSet.size()*sizeof(float));
    for (int i = 0; i <=  TETROMINO_AMOUNT; i++){
@@ -145,10 +145,10 @@ inline void Renderer::setBackgroundVAOLayout()
 void Renderer::setFixedBlockAttributes(int fieldWidth, int fieldHeight)
 {
     //Format: (vertex.x, vertex.y, TexCoord.u, TexCoord.v)
-    std::vector<float> squareVertexTexCoords = {-1.0f,-1.0f,  0.0f, 0.0f,
-                                                 1.0f,-1.0f,  1.0f, 0.0f,
-                                                 1.0f, 1.0f,  1.0f, 1.0f,
-                                                -1.0f, 1.0f,  0.0f, 1.0f};
+    std::vector<float> squareVertexTexCoords = {-1.0f/fieldWidth,-1.0f/fieldHeight,  0.0f, 0.0f,
+                                                 1.0f/fieldWidth,-1.0f/fieldHeight,  1.0f, 0.0f,
+                                                 1.0f/fieldWidth, 1.0f/fieldHeight,  1.0f, 1.0f,
+                                                -1.0f/fieldWidth, 1.0f/fieldHeight,  0.0f, 1.0f};
 
     m_VertexTexCoordsVBO.updateBufferData(squareVertexTexCoords.data(), squareVertexTexCoords.size()*sizeof(float));
 
@@ -167,8 +167,6 @@ void Renderer::setFixedBlockAttributes(int fieldWidth, int fieldHeight)
         for(int i = 0; i < fieldWidth; i++)
             centerSet.push_back(glm::vec2(0.5f*(borderMeshX[i] + borderMeshX[i+1]), 0.5f*(borderMeshY[j] + borderMeshY[j+1])));
      m_displacementVBO.updateBufferData(centerSet.data(), centerSet.size()*sizeof(glm::vec2));
-
-
 }
 
 inline void Renderer::setBackgroundAttributes()

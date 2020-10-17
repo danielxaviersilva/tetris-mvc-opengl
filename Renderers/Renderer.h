@@ -24,7 +24,7 @@ public:
     Renderer();
     ~Renderer();
     void initialize(int fieldWidth, int fieldHeight);
-    void render(std::vector<float>& tetrominoSet);
+    void render(const std::vector<float>& tetrominoSet);
 private:
 
     bool m_initialized;
