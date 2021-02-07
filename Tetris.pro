@@ -29,6 +29,7 @@ SOURCES += \
     Utilities/shader.cpp \
     main.cpp \
     MainWindow.cpp \
+    ui/PieceRenderer.cpp \
     ui/WidgetOpenGL.cpp
 
 HEADERS += \
@@ -45,6 +46,7 @@ HEADERS += \
     Utilities/VertexArray.h \
     Utilities/VertexBuffer.h \
     Utilities/renderCrossLine.h \
+    ui/PieceRenderer.h \
     ui/WidgetOpenGL.h
 
 INCLUDEPATH += "/usr/local/Cellar/glm/0.9.9.5/include" \

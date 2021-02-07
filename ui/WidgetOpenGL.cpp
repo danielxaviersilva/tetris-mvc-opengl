@@ -17,7 +17,7 @@ WidgetOpenGL::WidgetOpenGL(QWidget *parent): QOpenGLWidget{parent}, m_score(std:
 
 void WidgetOpenGL::initializeGL()
 {
-    srand(time(NULL));
+//    srand(time(NULL));
 }
 
 void WidgetOpenGL::resizeGL(int width, int height)
@@ -27,8 +27,9 @@ void WidgetOpenGL::resizeGL(int width, int height)
 
 void WidgetOpenGL::paintGL()
 {
-    if (m_controller == nullptr)
+    if (m_controller == nullptr){
         return;
+    }
     //Game Timing
 
 
@@ -37,7 +38,7 @@ void WidgetOpenGL::paintGL()
     //Game Logic
 
     //renderer
-        m_controller->draw();
+        m_controller->drawBoard();
         update();
         setScore(m_controller->getTetrisScore());
         setHorizontalLine(m_controller->getTetrisHorizontalLines());
@@ -88,7 +89,7 @@ void WidgetOpenGL::setHorizontalLine(std::string horizontalLine)
 
 void WidgetOpenGL::setPieceCounter(std::string pieceCounter)
 {
-    if(m_pieceCounter != pieceCounter){
+    if( m_pieceCounter != pieceCounter ){
         m_pieceCounter = pieceCounter;
         emit pieceCounterChanged(QString::fromStdString(m_pieceCounter));
     }

@@ -16,7 +16,7 @@ class Texture : protected CGUtilities
 {
     unsigned int m_rendererID;
     std::string m_path;
-    int m_width, m_height, m_BPP;
+    int m_width, m_height;
     bool m_initialized;
 
 public:

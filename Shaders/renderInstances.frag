@@ -26,7 +26,7 @@ void main (void)
 	
         if (tetroIndex >= 1 && tetroIndex < BACKGROUND_INDEX){
                 vec4 textureValue = texture(u_textureSet[tetroIndex-1], o_textureCoords);
-                setDiffuseLight(vec3(textureValue), vec3(1.0), vec3(-1.0, 1.0, 0.0), vec3(o_normal, 0.0), vec3(o_vertex, 0.0), diffuseLight);
+                setDiffuseLight(vec3(textureValue), vec3(1.0), vec3(-1.0, 1.0, -1.0), vec3(o_normal, 0.0), vec3(o_vertex, 0.0), diffuseLight);
                 fragColor = vec4(0.6*vec3(textureValue) + 0.4*diffuseLight, 1.0);
         }
 	else if (tetroIndex == BACKGROUND_INDEX)

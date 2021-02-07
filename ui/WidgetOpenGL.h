@@ -7,7 +7,6 @@
 #include <QString>
 
 
-
 #include "../Renderers/Renderer.h"
 #include "Controllers/controller.h"
 

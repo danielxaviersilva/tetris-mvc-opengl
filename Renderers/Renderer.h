@@ -13,6 +13,7 @@
 #include <Utilities/Shader.h>
 #include <Utilities/VertexArray.h>
 #include <Logic/Tetris.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <vector>
 #define BACKGROUND_INDEX 9 //If changed, go to shader to apply the same value so it matches
@@ -21,9 +22,9 @@
 class Renderer: public CGUtilities
 {
 public:
-    Renderer();
+    Renderer(bool centralizer = false);
     ~Renderer();
-    void initialize(int fieldWidth, int fieldHeight);
+    void initialize(const int fieldWidth, const int fieldHeight);
     void render(const std::vector<float>& tetrominoSet);
 private:
 
@@ -46,6 +47,10 @@ private:
     Shader m_program;
 
     GLuint m_bkgTextureIndex;
+
+    std::vector<glm::vec2> m_centerSet;
+    const bool m_centralizer;
+    GLint m_activeTetrominosPositionMeanLocation;
 
     inline void setBlockVAOLayout();
     inline void setBackgroundVAOLayout();

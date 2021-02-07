@@ -36,11 +36,11 @@ void VertexArray::addBuffer(VertexBuffer &vb)
 {
     bind();
     vb.bind();
-    int offset = 0;
+    long offset = 0L;
     for (int i = 0 ; i < int(m_layout.size()); i++)
     {
         glEnableVertexAttribArray(m_layout[i].varLocation);
-        glVertexAttribPointer(m_layout[i].varLocation, m_layout[i].elementCount, m_layout[i].type, m_layout[i].normalized, m_stride, (void*)( offset) );
+        glVertexAttribPointer(m_layout[i].varLocation, m_layout[i].elementCount, m_layout[i].type, m_layout[i].normalized, m_stride, (void*)offset);
         if (m_layout[i].isInstanced == INSTANCED)
             glVertexAttribDivisor(m_layout[i].varLocation, m_layout[i].instanciationDivisor);
 

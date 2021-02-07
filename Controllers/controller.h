@@ -21,10 +21,11 @@ public:
 private:
     std::vector<MOVEMENT> m_movementQueue;
 
-    Renderer *m_renderer;
+    Renderer *m_boardRenderer;
+    Renderer *m_NextPieceRenderer;
     Tetris *m_logic;
-    int m_maxSpeed;
-    int m_speedCounter;
+    const int m_maxSpeed;
+    const int m_speedCounter;
 
 public:
     Controller();
@@ -39,7 +40,8 @@ public:
     std::string getTetrisHorizontalLines() const;
     std::string getPieceCounter() const;
 
-    void draw();
+    void drawBoard();
+    void drawNextPiece();
 
 
     void start();

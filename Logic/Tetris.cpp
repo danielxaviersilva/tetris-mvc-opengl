@@ -3,7 +3,7 @@
 
 
 
-Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fieldHeight(fieldHeight),
+Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fieldHeight(fieldHeight), m_speedIncreaseRate(7), m_maximumSpeedRate(15),
     m_maxSpeed(40), m_speedCounter(0), m_pieceCounter(0), m_horizontalLinesCounter(0), m_speedIncreaseCheck(false), m_isGameOver(false), m_score(0)
 {
     srand(time(NULL));
@@ -42,34 +42,45 @@ Tetris::Tetris(int fieldWidth, int fieldHeight): m_fieldWidth(fieldWidth), m_fie
                          0,1,0,0,
                          0,0,0,0};
 
-    for(int j = 0; j < m_fieldHeight; j++)
-        for(int i = 0; i < m_fieldWidth; i++)
-            if(i == 0 || i == m_fieldWidth -1 || j == m_fieldHeight-1)
+    for(int j = 0; j < m_fieldHeight; j++){
+        for(int i = 0; i < m_fieldWidth; i++){
+            if(i == 0 || i == m_fieldWidth -1 || j == m_fieldHeight-1){
                 m_logicField.push_back(BORDER);
-            else
+           } else{
                 m_logicField.push_back(EMPTY_SPACE);
+           }
+        }
+    }
 
     m_renderField = m_logicField;
-
-    generateTetromino();
+    m_nextIndex = rand()%TETROMINO_AMOUNT;
+    m_nextIndex = rand()%TETROMINO_AMOUNT; //Called 2 times just to neglet the first value, which is always the same
+    m_nextTetromino = m_tetrominoSet[m_nextIndex];
+    GenerateTetromino();
     resetTetrominoPosition();
     updateField();
 }
 
-void Tetris::generateTetromino()
+void Tetris::GenerateTetromino()
 {
-    m_currentIndex = rand()%TETROMINO_AMOUNT;
-    m_currentTetromino = m_tetrominoSet[m_currentIndex];
+
+    m_currentTetromino = m_nextTetromino;
+    m_currentIndex = m_nextIndex;
+    m_nextIndex = rand()%TETROMINO_AMOUNT;
+
+    m_nextTetromino = m_tetrominoSet[m_nextIndex];
+
     m_pieceCounter++;
 
-    if(!(m_pieceCounter%SPEED_INCREASE_RATE))
+    if( !(m_pieceCounter%m_speedIncreaseRate) ){
         m_speedIncreaseCheck = true;
+    }
 }
 
 
 void Tetris::moveLeft()
 {
-    if(pieceFits(CASE0, m_currentTetrominoPosition[0]-1, m_currentTetrominoPosition[1]) && !m_isGameOver){
+    if( pieceFits(CASE0, m_currentTetrominoPosition[0]-1, m_currentTetrominoPosition[1]) && !m_isGameOver ){
         clearTetromino();
         m_currentTetrominoPosition[0]--;
         updateField();
@@ -78,7 +89,7 @@ void Tetris::moveLeft()
 
 void Tetris::moveRight()
 {
-        if(pieceFits(CASE0, m_currentTetrominoPosition[0]+1, m_currentTetrominoPosition[1])&& !m_isGameOver){
+        if( pieceFits(CASE0, m_currentTetrominoPosition[0]+1, m_currentTetrominoPosition[1])&& !m_isGameOver ){
             clearTetromino();
             m_currentTetrominoPosition[0]++;
             updateField();
@@ -87,25 +98,23 @@ void Tetris::moveRight()
 
 void Tetris::moveDown()
 {
-    if(pieceFits(CASE0, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1]+1) && !m_isGameOver){
+    if( pieceFits(CASE0, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1]+1) && !m_isGameOver ){
         clearTetromino();
         m_currentTetrominoPosition[1]++;
         updateField();
         m_score+=2;
-    }
-    else
+    } else {
         lockedPieceHandler();
+    }
 
 }
 
-void Tetris::Rotate(Tetris::rotationAngles rotation)
+void Tetris::Rotate(Tetris::RotationAngles_t rotation)
 {
     std::vector<int> rotatedTetromino;
     rotatedTetromino.resize(16);
-    for(int py = 0; py < 4; py++)
-    {
-        for (int px = 0; px < 4; px++)
-        {
+    for(int py = 0; py < 4; py++){
+        for (int px = 0; px < 4; px++) {
             switch(rotation){
                 case CASE0:   rotatedTetromino[px + 4*py] = m_currentTetromino[py*4 + px     ];break;
                 case CASE90:  rotatedTetromino[px + 4*py] = m_currentTetromino[12 + py - px*4];break;
@@ -119,7 +128,7 @@ void Tetris::Rotate(Tetris::rotationAngles rotation)
 
 void Tetris::rotate90()
 {
-    if(pieceFits(CASE90, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1]+1)){
+    if( pieceFits(CASE90, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1]+1) ){
         clearTetromino();
         Rotate(CASE90);
         updateField();
@@ -128,43 +137,40 @@ void Tetris::rotate90()
 
 void Tetris::forcePieceDown()
 {
-    if(pieceFits(CASE0, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1]+1)){
+    if( pieceFits(CASE0, m_currentTetrominoPosition[0], m_currentTetrominoPosition[1]+1) ){
         clearTetromino();
         m_currentTetrominoPosition[1]++;
         updateField();
         m_score++;
-    }
-    else
+    }else{
         lockedPieceHandler();
+    }
 }
 
 void Tetris::movementHandler()
 {
-    if(isGameOver())
+    if( IsGameOver() ){
         return;
+    }
     m_speedCounter++;
-    if(m_speedCounter >= m_maxSpeed)
-    {
+    if(m_speedCounter >= m_maxSpeed){
         m_speedCounter = 0;
         forcePieceDown();
     }
 }
 
-bool Tetris::pieceFits(Tetris::rotationAngles rotationAngle, int posX, int posY)
+bool Tetris::pieceFits(Tetris::RotationAngles_t rotationAngle, int posX, int posY) const
 {
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j =0; j<4; j++)
-        {
+    for (int i = 0; i < 4; i++){
+        for (int j =0; j<4; j++){
             int blockPosition = rotatePosition(i, j, rotationAngle);
             int fieldBlockPosition = (posY + j)*m_fieldWidth + (posX + i);
 
-            if(posX + i >= 0 && posX + i <= m_fieldWidth)
-            {
-                if(posY + j>=0 && posY + j <= m_fieldHeight)
-                {
-                    if(m_currentTetromino[blockPosition] !=0 && m_logicField[fieldBlockPosition] != EMPTY_SPACE)
+            if( posX + i >= 0 && posX + i <= m_fieldWidth ){
+                if( posY + j>=0 && posY + j <= m_fieldHeight ){
+                    if(m_currentTetromino[blockPosition] !=0 && m_logicField[fieldBlockPosition] != EMPTY_SPACE){
                         return false;
+                    }
                 }
             }
         }
@@ -172,10 +178,9 @@ bool Tetris::pieceFits(Tetris::rotationAngles rotationAngle, int posX, int posY)
     return true;
 }
 
-int Tetris::rotatePosition(int px, int py, rotationAngles rotationAngle)
+int Tetris::rotatePosition(int px, int py, RotationAngles_t rotationAngle) const
 {
-    switch (rotationAngle)
-    {
+    switch ( rotationAngle ){
         case CASE0:   return py*4 + px;
         case CASE90:  return 12 + py - px*4;
         case CASE180: return 15 - py*4 -px;
@@ -188,26 +193,31 @@ void Tetris::clearTetromino()
 {
     for (int i = 0; i<4;i++){
         for(int j = 0; j<4;j++){
-            if(m_currentTetromino[i+ 4*j] != 0)
+            if(m_currentTetromino[i+ 4*j] != 0){
                 m_renderField[i + m_currentTetrominoPosition[0] + (j+ m_currentTetrominoPosition[1])*m_fieldWidth] = EMPTY_SPACE;
+            }
         }
     }
 }
 void Tetris::updateField()
 {
-    for (int i = 0; i<4;i++)
-        for(int j = 0; j<4;j++)
-            if(m_currentTetromino[i + j*4] == 1)
+    for (int i = 0; i<4;i++){
+        for(int j = 0; j<4;j++){
+            if(m_currentTetromino[i + j*4] == 1){
                 m_renderField[i + m_currentTetrominoPosition[0] + (j+ m_currentTetrominoPosition[1])*m_fieldWidth] = (m_currentIndex+ 2);
+            }
+        }
+    }
 
 }
 
 void Tetris::lockedPieceHandler()
 {
-    if(isGameOver())
+    if( IsGameOver() ){
         return;
+    }
     m_speedCounter = m_maxSpeed;
-    generateTetromino();
+    GenerateTetromino();
     checkHorizontalLines();
     m_logicField = m_renderField;
 
@@ -230,45 +240,47 @@ inline void Tetris::resetTetrominoPosition()
 inline void Tetris::checkHorizontalLines()
 {
     float SerialBlocksAdditionalRewardCoeff = 1.0f;
-    for (int j  = 0; j < m_fieldHeight-1; j++)
-    {
+    for (int j  = 0; j < m_fieldHeight-1; j++){
         int rowCounter = 0;
-        for (int i = 1; i< m_fieldWidth -1; i++)
-            if(m_renderField[j*m_fieldWidth + i] != EMPTY_SPACE)
+        for (int i = 1; i< m_fieldWidth -1; i++){
+            if(m_renderField[j*m_fieldWidth + i] != EMPTY_SPACE){
                 rowCounter++;
-            else break;
-        if(rowCounter == m_fieldWidth - 2){
+            } else break;
+        }
+        if( rowCounter == m_fieldWidth - 2 ){
             m_horizontalLinesCounter++;
             m_score += int(SerialBlocksAdditionalRewardCoeff*20);
             SerialBlocksAdditionalRewardCoeff*=1.2f;
-            for (int k = j; k>0; k--)
-                for (int i = 1; i< m_fieldWidth-1; i++) //In this case, conserving the borders
+            for (int k = j; k>0; k--){
+                for (int i = 1; i< m_fieldWidth-1; i++){ //In this case, conserving the borders
                     m_renderField[k*m_fieldWidth + i] = m_renderField[(k-1)*m_fieldWidth + i];
+                }
+            }
         }
     }
-
 }
 
 inline void Tetris::speedHandler()
 {
-    if(m_speedIncreaseCheck){
+    if( m_speedIncreaseCheck ){
         m_speedIncreaseCheck = false;
-        if(m_maxSpeed > 15){
+        if(m_maxSpeed >= m_maximumSpeedRate){
+            std::cout << "Speed now: " << m_maxSpeed << std::endl;
             m_maxSpeed--;
             m_speedCounter = 0;
         }
     }
 }
 
-int Tetris::getFieldWidth(){
+const int& Tetris::GetFieldWidth(){
     return m_fieldWidth;
 }
 
-int Tetris::getFieldHeight(){
+const int& Tetris::GetFieldHeight(){
     return m_fieldHeight;
 }
 
-std::vector<float>& Tetris::getTetrominoIndex(){
+std::vector<float>& Tetris::GetTetrominoIndex(){
     return m_renderField;
 }
 
@@ -276,14 +288,24 @@ int Tetris::getScore() const{
     return m_score;
 }
 
-bool Tetris::isGameOver() const{
+bool Tetris::IsGameOver() const{
     return m_isGameOver;
 }
 
-int Tetris::getPieceCounter() const{
+int  Tetris::getPieceCounter() const{
     return m_pieceCounter;
 }
 
 int Tetris::getHorizontalLinesCounter() const{
     return m_horizontalLinesCounter;
+}
+
+std::vector<float> Tetris::getNextTetromino()
+{
+    std::vector<float> nextTetromino;
+    nextTetromino.reserve(m_nextTetromino.size());
+    for (auto & t : m_nextTetromino){
+        nextTetromino.emplace_back(float((m_nextIndex+2)*t));
+    }
+    return nextTetromino;
 }

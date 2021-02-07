@@ -13,9 +13,11 @@ MainWindow::MainWindow(QWidget *parent)
     format.setDepthBufferSize(24);
     QSurfaceFormat::setDefaultFormat(format);
     this->ui->openGLWidget->setFormat(format);
+    this->ui->nextPiece->setFormat(format);
 
     m_controller = new Controller;
     this->ui->openGLWidget->setController(m_controller);
+    this->ui->nextPiece->setController(m_controller);
 
     connect(this->ui->openGLWidget, SIGNAL(scoreChanged(QString)),
             ui->ScoreValue, SLOT(setText(QString)));

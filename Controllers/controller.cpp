@@ -1,40 +1,46 @@
 #include "controller.h"
 
-Controller::Controller(): m_renderer(nullptr),  m_logic(nullptr), m_maxSpeed(30), m_speedCounter(0)
+Controller::Controller(): m_boardRenderer(nullptr),  m_NextPieceRenderer(nullptr), m_logic(nullptr), m_maxSpeed(30), m_speedCounter(0)
 {}
 
 Controller::~Controller()
 {
     delete m_logic;
-    delete m_renderer;
+    delete m_boardRenderer;
+    delete m_NextPieceRenderer;
 }
 
 
 Renderer *Controller::getRenderer() const{
-    return m_renderer;
+    return m_boardRenderer;
 }
 
 
 void Controller::pullMoveLeft(){
-    if(m_logic == nullptr)
+    if( m_logic == nullptr )
         return;
     m_logic->moveLeft();
 }
 
 void Controller::pullMoveRight(){
-    if(m_logic == nullptr)
-        return;
-     m_logic->moveRight();
+    if( m_logic != nullptr ){
+        if ( !m_logic->IsGameOver() ){
+            m_logic->moveRight();
+        }
+    }
 }
 
 void Controller::pullRotate(){
-    if(m_logic == nullptr)
-        return;
-    m_logic->rotate90();
+    if( m_logic != nullptr ){
+        if ( !m_logic->IsGameOver() ){
+           m_logic->rotate90();
+        }
+    }
+
 }
 
 void Controller::pullSpeedUp(){
-    if(m_logic == nullptr)
+    if( m_logic == nullptr )
         return;
     m_logic->moveDown();
 }
@@ -65,12 +71,22 @@ std::string Controller::getPieceCounter() const
 
 }
 
-void Controller::draw(){
-    if(m_renderer == nullptr || m_logic == nullptr)
+void Controller::drawBoard(){
+    if( m_boardRenderer == nullptr || m_logic == nullptr )
         return;
    std::this_thread::sleep_for(std::chrono::milliseconds(25));
    m_logic->movementHandler();
-    m_renderer->render(m_logic->getTetrominoIndex());
+    m_boardRenderer->render(m_logic->GetTetrominoIndex());
+
+}
+
+void Controller::drawNextPiece()
+{
+    if( m_NextPieceRenderer == nullptr || m_logic == nullptr )
+        return;
+//   std::this_thread::sleep_for(std::chrono::milliseconds(25));
+//   m_logic->movementHandler();
+   m_NextPieceRenderer->render(m_logic->getNextTetromino());
 
 }
 
@@ -80,7 +96,9 @@ void Controller::start()
         delete m_logic;
 
     m_logic = new Tetris;
-    m_renderer = new Renderer;
-    m_renderer->initialize(m_logic->getFieldWidth(), m_logic->getFieldHeight());
+    m_boardRenderer = new Renderer;
+    m_boardRenderer->initialize(m_logic->GetFieldWidth(), m_logic->GetFieldHeight());
+    m_NextPieceRenderer = new Renderer(true);
+    m_NextPieceRenderer->initialize(4, 4);
 
 }

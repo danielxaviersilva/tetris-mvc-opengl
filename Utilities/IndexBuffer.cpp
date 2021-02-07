@@ -46,10 +46,11 @@ void IndexBuffer::updateBufferData(const unsigned int *data, unsigned int count)
 
 void IndexBuffer::bind()
 {
-    if (m_initialized)
+    if (m_initialized){
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iboID);
-    else
+    } else{
         std::cerr << "Index Buffer not initialized" << std:: endl;
+    }
     _check_gl_error(__FILE__, __LINE__);
 }
 

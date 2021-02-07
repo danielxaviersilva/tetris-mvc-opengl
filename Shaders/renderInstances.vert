@@ -14,8 +14,10 @@ in vec2 a_textureCoords;
 in vec2 ia_displacement;
 in float ia_tetrominoIndex;
 
+uniform vec2 u_activeTetrominosPositionMean;
 
-uniform sampler2D u_textureSet[TETROMINO_AMOUNT+1];
+
+//uniform sampler2D u_textureSet[TETROMINO_AMOUNT+1];
 
 out float o_tetrominoIndex;
 out vec2 o_textureCoords;
@@ -30,7 +32,7 @@ void main(void)
     o_vertex = a_vertex + ia_displacement;
     o_normal = a_vertex;
 
-    gl_Position = vec4(a_vertex + ia_displacement, 0.0, 1.0);
+    gl_Position = vec4(a_vertex + ia_displacement - u_activeTetrominosPositionMean, 0.0, 1.0);
 
 
 }

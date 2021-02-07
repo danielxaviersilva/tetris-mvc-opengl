@@ -24,7 +24,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Controller * m_controller;
-
     int m_score;
 
 
