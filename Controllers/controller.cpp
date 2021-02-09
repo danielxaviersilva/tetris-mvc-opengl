@@ -74,7 +74,7 @@ std::string Controller::getPieceCounter() const
 void Controller::drawBoard(){
     if( m_boardRenderer == nullptr || m_logic == nullptr )
         return;
-   std::this_thread::sleep_for(std::chrono::milliseconds(25));
+//   std::this_thread::sleep_for(std::chrono::milliseconds(25));
    m_logic->movementHandler();
     m_boardRenderer->render(m_logic->GetTetrominoIndex());
 

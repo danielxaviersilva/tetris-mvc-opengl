@@ -303,9 +303,16 @@ int Tetris::getHorizontalLinesCounter() const{
 std::vector<float> Tetris::getNextTetromino()
 {
     std::vector<float> nextTetromino;
+
     nextTetromino.reserve(m_nextTetromino.size());
-    for (auto & t : m_nextTetromino){
-        nextTetromino.emplace_back(float((m_nextIndex+2)*t));
+    if (!m_isGameOver) {
+        for (auto & t : m_nextTetromino){
+            nextTetromino.emplace_back(float((m_nextIndex+2)*t));
+        }
+    } else {
+        for (auto i = 0u; i < m_nextTetromino.size(); i++) {
+            nextTetromino.emplace_back(0.0f);
+        }
     }
     return nextTetromino;
 }

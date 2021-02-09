@@ -3,7 +3,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), m_score(0)
+    , ui(new Ui::MainWindow), m_score(0), m_timerLength(25)
 {
     ui->setupUi(this);
     QSurfaceFormat format;
@@ -27,6 +27,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this->ui->openGLWidget, SIGNAL(pieceCounterChanged(QString)),
             ui->TetrominosAmount, SLOT(setText(QString)));
+
+//    m_gameTimer = new QTimer(this);
+//    connect(m_gameTimer, SIGNAL(timeout()), this, SLOT(UpdateGame()));
+//    m_gameTimer->start(5000);
+
 
 }
 
@@ -63,6 +68,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     break;
     }
 
+}
+
+void MainWindow::UpdateGame()
+{
+    m_controller->drawBoard();
 }
 
 

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QKeyEvent>
 #include "Controllers/controller.h"
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,9 +27,16 @@ private:
     Controller * m_controller;
     int m_score;
 
+    const int m_timerLength;
+
+    QTimer* m_gameTimer;
+
 
 protected:
     void keyPressEvent(QKeyEvent* event) override;
+
+public slots:
+    void UpdateGame();
 
 
 };

@@ -25,6 +25,8 @@ public:
 
     void setController(Controller *controller);
 
+    void updateGame();
+
 private:
    Controller *m_controller;
 
